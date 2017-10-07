@@ -24,7 +24,7 @@ public class CtyptoUtil {
 
     private byte [] encrypt(byte [] data,String key) {
         try {
-            IvParameterSpec iv = new IvParameterSpec("@@@@&&&&####$$$$".getBytes("UTF-8"));
+            IvParameterSpec iv = new IvParameterSpec("$$appsfly.io##$$".getBytes("UTF-8"));
             SecretKeySpec skeySpec = new SecretKeySpec(key.getBytes("UTF-8"), "AES");
 
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
@@ -67,15 +67,23 @@ public class CtyptoUtil {
         try {
             MessageDigest digest = MessageDigest.getInstance(algo);
             digest.update(ArrayUtils.addAll(salt, data));
-            return digest.digest();
+            return getHexBytes(digest.digest());
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
         return null;
     }
 
+    private byte[] getHexBytes(byte[] digested) {
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < digested.length; i++) {
+            sb.append(Integer.toString((digested[i] & 0xff) + 0x100, 16).substring(1));
+        }
+        return sb.toString().getBytes();
+    }
+
     private byte[] sha256sum(byte [] salt, byte [] data){
-        return getBytes(data, salt, "SHA-256");
+        return getBytes(salt, data, "SHA-256");
     }
 
     public String getChecksum(byte [] data, String key){
@@ -88,6 +96,8 @@ public class CtyptoUtil {
         byte[] checksum = decrypt(Base64.decodeBase64(checksumParam.getBytes()), key);
         byte[] salt = Arrays.copyOfRange(checksum, checksum.length-4, checksum.length);
         byte[] sha256 = Arrays.copyOfRange(checksum, 0, checksum.length-4);
+        System.out.println(new String(salt));
+        System.out.println(new String(sha256));
         return Arrays.equals(sha256,sha256sum(salt,data));
     }
 
