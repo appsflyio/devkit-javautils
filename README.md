@@ -1,1 +1,1 @@
-# appsfly.io Java - DevKit
+# appsfly.io DevKit - Java Utils
