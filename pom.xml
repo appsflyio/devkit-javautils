@@ -20,6 +20,11 @@
     </build>
     <dependencies>
         <dependency>
+            <groupId>org.asynchttpclient</groupId>
+            <artifactId>async-http-client</artifactId>
+            <version>LATEST</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-crypto</artifactId>
             <version>1.0.0</version>
