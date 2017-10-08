@@ -8,7 +8,7 @@ public class App {
     public static void main(String args[]){
         AppInstance.AFConfig config = new AppInstance.AFConfig("http://testurl", "1234567890123456", "dcbbank");
 
-        AppInstance clearTrip = new AppInstance(config, "com.cleartrip");
+        AppInstance clearTrip = new AppInstance(config, "com.cleartrip.microservices.local");
         clearTrip.exec("doBooking", new JSONObject() {{
             //Set Params Here
             // We will take care of checksum
@@ -26,7 +26,7 @@ public class App {
         });
 
 
-        AppInstance bookMyShow = new AppInstance(config, "com.bookmyshow");
+        AppInstance bookMyShow = new AppInstance(config, "com.cleartrip.microservices.default");
         bookMyShow.exec("doBooking", new JSONObject() {{
             //Set Params Here
             // We will take care of checksum
