@@ -43,6 +43,7 @@ public class AppInstance {
         JSONObject payload = new JSONObject() {{
             put("body", body);
             put("module-id", microModuleId);
+            put("app-id", config.appId);
         }};
         String checksum = CtyptoUtil.getInstance().getChecksum(payload.toString().getBytes(), config.secretKey);
 
