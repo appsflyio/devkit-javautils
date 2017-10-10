@@ -5,7 +5,10 @@ import io.appsfly.core.Callback;
 import io.appsfly.util.json.JSONObject;
 
 public class App {
+
     public static void main(String args[]){
+        org.apache.log4j.BasicConfigurator.configure();
+
         AppInstance.AFConfig config = new AppInstance.AFConfig("http://testurl", "1234567890123456", "dcbbank");
 
         AppInstance clearTrip = new AppInstance(config, "com.cleartrip.microservices.local");
