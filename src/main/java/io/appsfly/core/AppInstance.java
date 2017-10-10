@@ -4,9 +4,7 @@ import io.appsfly.crypto.CtyptoUtil;
 import io.appsfly.util.json.JSONObject;
 import okhttp3.*;
 
-
 import java.io.IOException;
-import java.util.logging.Logger;
 
 public class AppInstance {
 
