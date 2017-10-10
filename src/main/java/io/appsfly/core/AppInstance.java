@@ -2,12 +2,11 @@ package io.appsfly.core;
 
 import io.appsfly.crypto.CtyptoUtil;
 import io.appsfly.util.json.JSONObject;
-import org.asynchttpclient.AsyncCompletionHandler;
-import org.asynchttpclient.AsyncHttpClient;
-import org.asynchttpclient.DefaultAsyncHttpClient;
-import org.asynchttpclient.Response;
+import okhttp3.*;
+
 
 import java.io.IOException;
+import java.util.logging.Logger;
 
 public class AppInstance {
 
@@ -15,65 +14,74 @@ public class AppInstance {
 
         String repoUrl;
         String secretKey;
-        String appId;
+        String appKey;
 
-        public AFConfig(String repoUrl, String secretKey, String appId) {
+        public AFConfig(String repoUrl, String secretKey, String appKey) {
             this.repoUrl = repoUrl;
             this.secretKey = secretKey;
-            this.appId = appId;
+            this.appKey = appKey;
         }
 
     }
 
     private AFConfig config;
     private String microModuleId;
-
+    public static final MediaType JSON
+            = MediaType.parse("application/json; charset=utf-8");
     public AppInstance(AFConfig config, String microModuleId) {
         this.config = config;
         this.microModuleId = microModuleId;
     }
 
-
     public void exec(final String intent, final JSONObject intentData, final Callback callback){
+        exec(intent, intentData, "generic", callback);
+    }
+    public void exec(final String intent, final JSONObject intentData, final String userID, final Callback callback){
         final JSONObject body = new JSONObject() {{
             put("intent", intent);
             put("data", intentData);
         }};
+        String payload = body + "|" +  microModuleId + "|" + config.appKey + "|" + userID;
+        String checksum = CtyptoUtil.getInstance().getChecksum(payload.getBytes(), config.secretKey);
+        OkHttpClient httpClient = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url(this.config.repoUrl+"/executor/exec")
+                .addHeader("X-Module-Handle", microModuleId)
+                .addHeader("X-App-Key", config.appKey)
+                .addHeader("X-Checksum", checksum)
+                .addHeader("X-UUID", userID)
+                .post(RequestBody.create(JSON, body.toString()))
+                .build();
+        httpClient.newCall(request).enqueue(new okhttp3.Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
 
-        JSONObject payload = new JSONObject() {{
-            put("body", body);
-            put("module-id", microModuleId);
-            put("app-id", config.appId);
-        }};
-        String checksum = CtyptoUtil.getInstance().getChecksum(payload.toString().getBytes(), config.secretKey);
+            }
 
-        AsyncHttpClient asyncHttpClient = new DefaultAsyncHttpClient();
-        asyncHttpClient.preparePost(this.config.repoUrl+"/exec")
-                .addHeader("x-module-id", microModuleId)
-                .addHeader("x-app-id", config.appId)
-                .addHeader("x-checksum", checksum)
-                .setBody(body.toString().getBytes())
-                .execute(new AsyncCompletionHandler<Integer>(){
-
-                    @Override
-                    public Integer onCompleted(Response response) throws Exception{
-                        String checksum = response.getHeaders().get("x-checksum");
-                        boolean verifychecksum = CtyptoUtil.getInstance().verifychecksum(response.getResponseBody().getBytes(), checksum, config.secretKey);
-                        if (verifychecksum){
-                            callback.onResponse(new JSONObject(response.getResponseBody()));
-                        }
-                        else{
-                            callback.onError(new JSONObject(){{
-                                put("message", "Checksum Validation Failed");
-                            }});
-                        }
-                        return response.getStatusCode();
+            @Override
+            public void onResponse(Call call, final okhttp3.Response response) throws IOException {
+                String checksum = response.headers().get("X-Checksum");
+                if(checksum!=null){
+                    boolean verified = CtyptoUtil.getInstance().verifychecksum(response.body().bytes(), checksum, config.secretKey);
+                    if (verified){
+                        callback.onResponse(new JSONObject(response.body().bytes()));
                     }
-
-                    @Override
-                    public void onThrowable(Throwable t){
-                        // Something wrong happened.
+                    else{
+                        callback.onError(new JSONObject(){{
+                            put("message", "Checksum Validation Failed");
+                        }});
                     }
-                });
+                }
+                else{
+                    final JSONObject responseBody = new JSONObject(response.body().string());
+                    if(responseBody.has("error")){
+                        callback.onError(new JSONObject(){{
+                            put("message", responseBody.getJSONObject("error").get("message"));
+                            put("status", response.code());
+                        }});
+                    }
+                }
+            }
+        });
     }
 }
