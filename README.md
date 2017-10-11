@@ -37,9 +37,8 @@ The SDK can be included to handle authorization. There is no need for you to han
 
 ##### Install
 
-###### Maven Includes
-
-Step 1. Add repo to your root pom.xml
+Maven
+###### Step 1. Add repo to your root pom.xml
 ```
 <repositories>
      <repository>
@@ -60,9 +59,8 @@ Step 2. Add the dependency
 </dependencies>
 ```
 
-###### Gradle Includes
-
-Step 1. Add it in your root build.gradle at the end of repositories
+Gradle
+###### Step 1. Add it in your root build.gradle at the end of repositories
 ```
 allprojects {
 	repositories {
