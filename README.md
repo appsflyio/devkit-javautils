@@ -73,7 +73,7 @@ allprojects {
 ###### Step 2. Add the dependency
 ```
 dependencies {
-	compile 'com.github.User:Repo:Tag'
+	compile 'com.github.appsflyio:devkit-javautils:0.0.1'
 }
 
 ```
