@@ -10,17 +10,48 @@ To start posting messages securely we need the following:
 | Secret Key | Secret Key is required for encryption. Secret Key should be generated on the Appsfly publisher dashboard. |
 | App Key | Application key to identify the publisher instance. |
 
+Configure the app using the following configuration:
+
+```
+AppInstance.AFConfig config = new AppInstance.AFConfig("https://microapps.appsfly.io", "1234567890123456", "92ae2562-aebc-468f-bc9e-aa3cdd9d39b1");
+```
+
 ## Generation of checksum
 
 ```
+// Generate payload string
 String payload = body + "|" +  microModuleId + "|" + config.appKey + "|" + userID;
+// Generate checksum
 String checksum = CtyptoUtil.getInstance().getChecksum(payload.getBytes(), config.secretKey);
+
+// HTTP Request
+Request request = new Request.Builder()
+                .url(this.config.repoUrl+"/executor/exec")
+                .addHeader("X-Module-Handle", microModuleId)
+                .addHeader("X-App-Key", config.appKey)
+                .addHeader("X-Checksum", checksum)
+                .addHeader("X-UUID", userID)
+                .post(RequestBody.create(JSON, body.toString()))
+                .build();
 ```
 
 ## Verification of checkSum
 
 ```
-AppInstance.AFConfig config = new AppInstance.AFConfig("https://microapps.appsfly.io", "1234567890123456", "92ae2562-aebc-468f-bc9e-aa3cdd9d39b1");
+// Fetch Checksum from headers
+String checksum = response.headers().get("X-Checksum");
+if(checksum!=null){
+    // Verify checksum with body and secret key
+    boolean verified = CtyptoUtil.getInstance().verifychecksum(response.body().bytes(), checksum, config.secretKey);
+    if (verified){
+        callback.onResponse(new JSONObject(response.body().bytes()));
+    }
+    else{
+        callback.onError(new JSONObject(){{
+            put("message", "Checksum Validation Failed");
+        }});
+    }
+}
 ```     
 
 ## API Endpoint (/executor/exec)
