@@ -8,7 +8,7 @@ Please contact integrations@appsfly.io for your credientials.
 
 Application Params
 | Key | Description |
-| ----- | ----------- |
+| --- | --- |
 | SECRET_KEY | Secret Key is required for encryption. Secret Key should be generated on the Appsfly publisher dashboard. |
 | APP_KEY | Application key to identify the publisher instance. |
 | EXECUTOR_URL | Url to reach appsfly.io Microservices. |
@@ -17,13 +17,13 @@ Application Params
 
 Micro Module Params
 | Key | Description |
-| ----- | ----------- |
+| --- | --- |
 | MODULE_HANDLE | Each micromodule of a service provider is identified by MODULE_HANDLE |
 | UUID | UniqueID to identify user session.|
 
 Intent Params
 | Key | Description |
-| ----- | ----------- |
+| --- | --- |
 | INTENT | Intent is like an endpoint you are accessing to send message |
 | PAYLOAD | Data payload |
 
