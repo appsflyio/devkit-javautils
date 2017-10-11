@@ -35,6 +35,52 @@ Please contact integrations@appsfly.io for your credientials.
 ### Option 1: SDK
 The SDK can be included to handle authorization. There is no need for you to handle checksum generation and verification.
 
+##### Install
+
+Maven Includes
+==============
+Step 1. Add repo to your root pom.xml
+```
+<repositories>
+     <repository>
+         <id>jitpack.io</id>
+         <url>https://jitpack.io</url>
+     </repository>
+</repositories>
+```
+
+Step 2. Add the dependency
+```
+<dependencies>
+     <dependency>
+         <groupId>com.github.appsflyio</groupId>
+         <artifactId>devkit-javautils</artifactId>
+         <version>0.0.1</version>
+     </dependency>
+</dependencies>
+```
+
+Gradle Includes
+==============
+
+Step 1. Add it in your root build.gradle at the end of repositories
+```
+allprojects {
+	repositories {
+		...
+		maven { url 'https://jitpack.io' }
+	}
+}
+```
+
+Step 2. Add the dependency
+```
+dependencies {
+	compile 'com.github.User:Repo:Tag'
+}
+
+```
+
 ##### Configuration
 ```
 AppInstance.AFConfig config = new AppInstance.AFConfig("EXECUTOR_URL", "SECRET_KEY", "APP_KEY");
