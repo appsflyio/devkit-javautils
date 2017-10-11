@@ -102,7 +102,7 @@ travelProvider.exec("INTENT", JSONObject("PAYLOAD"), "UUID", new Callback() {
 appsfly.io exposes a single API endpoint to access Microservices directly.
 
 #### Endpoint
-https://microapps.appsfly.io/executor/exec
+[EXECUTOR_URL](#EXECUTOR_URL)/executor/exec
 
 #### Method
 POST
