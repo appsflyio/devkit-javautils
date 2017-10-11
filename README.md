@@ -11,13 +11,17 @@ To start posting messages securely we need the following:
 | App Key | Application key to identify the publisher instance. |
 
 ## Generation of checksum
+
+```
 String payload = body + "|" +  microModuleId + "|" + config.appKey + "|" + userID;
 String checksum = CtyptoUtil.getInstance().getChecksum(payload.getBytes(), config.secretKey);
+```
 
 ## Verification of checkSum
 
+```
 AppInstance.AFConfig config = new AppInstance.AFConfig("https://microapps.appsfly.io", "1234567890123456", "92ae2562-aebc-468f-bc9e-aa3cdd9d39b1");
-        
+```     
 
 ## API Endpoint (/executor/exec)
 
