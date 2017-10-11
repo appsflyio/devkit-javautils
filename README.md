@@ -1,7 +1,8 @@
 # About appsfly.io Dev Kit Java Utils
 Java Utils contains resources to help communicate with appsfly.io secure server through encryption. 
 
-appsfly.io does not whitelist IPs, instead a checkSum should be generated with the Secret Key. To get a Secret Key contact integrations@appsfly.io
+appsfly.io does not whitelist IPs. instead a checkSum should be generated with the Secret Key.
+To get a Secret Key contact integrations@appsfly.io
 
 ###  Get Started
 To start posting messages securely we need the following:
@@ -24,15 +25,12 @@ You can use it to avoid boiler plate code. If not, you can use the api endpoint.
 
 #### Configuration
 ```
-AppInstance.AFConfig config = new AppInstance.AFConfig("REPO_URL", "SECRET_KEY", "APP_KEY");
+AppInstance.AFConfig config = new AppInstance.AFConfig("EXECUTOR_URL", "SECRET_KEY", "APP_KEY");
 ```  
 #### Execution
 ```
 AppInstance travelProvider = new AppInstance(config, "MODULE_HANDLE");
-travelProvider.exec("doBooking",  new JSONObject() {{
-    //Set Params Here
-    // We will take care of checksum
-}}, new Callback() {
+travelProvider.exec("INTENT",  "PAYLOAD", new Callback() {
     @Override
     public void onResponse(JSONObject response) {
         System.out.println(response);
