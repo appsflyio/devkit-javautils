@@ -4,24 +4,24 @@ For all communications with execution server, your application should be registe
 
 Please contact integrations@appsfly.io for your credientials.
 
-###  Get Started
-
-Application Params
+#  Get Started
+#### Application Params
 | Key | Description |
 | --- | --- |
-| SECRET_KEY | Secret Key is required for encryption. Secret Key should be generated on the Appsfly publisher dashboard. |
-| APP_KEY | Application key to identify the publisher instance. |
-| EXECUTOR_URL | Url to reach appsfly.io Microservices. |
+| SECRET_KEY  | Secret Key is required for encryption. Secret Key should be generated on the Appsfly publisher dashboard |
+| APP_KEY | Application key to identify the publisher instance|
+| EXECUTOR_URL | Url to reach appsfly.io Microservices |
 
 **NOTE:** Above params are needed for checksum generation. Please refer to the methods mention below.
 
-Micro Module Params
+#### Micro Module Params
+
 | Key | Description |
 | --- | --- |
 | MODULE_HANDLE | Each micromodule of a service provider is identified by MODULE_HANDLE |
-| UUID | UniqueID to identify user session.|
+| UUID | UniqueID to identify user session|
 
-Intent Params
+#### Intent Params
 | Key | Description |
 | --- | --- |
 | INTENT | Intent is like an endpoint you are accessing to send message |
@@ -32,11 +32,11 @@ Intent Params
 ### Option 1: SDK
 The SDK can be included to handle authorization. There is no need for you to handle checksum generation and verification.
 
-#### Configuration
+##### Configuration
 ```
 AppInstance.AFConfig config = new AppInstance.AFConfig("EXECUTOR_URL", "SECRET_KEY", "APP_KEY");
 ```  
-#### Execution
+##### Execution
 ```
 AppInstance travelProvider = new AppInstance(config, "MODULE_HANDLE");
 travelProvider.exec("INTENT", JSONObject("PAYLOAD"), "UUID", new Callback() {
@@ -53,28 +53,31 @@ travelProvider.exec("INTENT", JSONObject("PAYLOAD"), "UUID", new Callback() {
 ```
 
 ### Option 2: API Endpoint
-
 appsfly.io exposes a single API endpoint to access Microservices directly.
 
-API endpoint : "https://microapps.appsfly.io/executor/exec"
+##### Endpoint
+https://microapps.appsfly.io/executor/exec
 
-####
+##### Method
 POST
 
-#### Headers
+##### Headers
 | Header | Description |
 | --- | --- |
-| X-UUID | UUID |
-| X-App-Key | APP_KEY|
-| X-Module-Handle | MODULE_HANDLE|
-| X-Checksum | CHECKSUM. Please go through this gist to generate checksum. |
+| X-UUID | [UUID](#UUID) |
+| X-App-Key | [APP_KEY](#APP_KEY)|
+| X-Module-Handle | [MODULE_HANDLE](#MODULE_HANDLE)|
+| X-Checksum | CHECKSUM. Please go through [this gist]() to generate checksum. |
 | Content-Type | Must be "application/json" |
 
-#### Body
-` {
+##### Body
+[INTENT](#INTENT), [PAYLOAD](#PAYLOAD)
+``` 
+{
   "intent":"INTENT",
   "data":"PAYLOAD"
- } `
+ } 
+ ```
 
-#### Response
-Response format will be dependent on microservice. Please go through this documentation for different microservices.
+##### Response
+Response format will be dependent on microservice. Please go through [this documentation]() for different microservices.
