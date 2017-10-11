@@ -86,8 +86,8 @@ public class CtyptoUtil {
 
     public boolean verifychecksum(byte [] data, String checksumParam, String key){
         byte[] checksum = decrypt(checksumParam.getBytes(), key);
-        byte[] salt = Arrays.copyOfRange(checksum, checksum.length-4, checksum.length);
-        byte[] sha256 = Arrays.copyOfRange(checksum, 0, checksum.length-4);
+        byte[] salt = Arrays.copyOfRange(checksum, checksum.length-8, checksum.length);
+        byte[] sha256 = Arrays.copyOfRange(checksum, 0, checksum.length-8);
         return Arrays.equals(sha256,sha256sum(salt,data));
     }
 
