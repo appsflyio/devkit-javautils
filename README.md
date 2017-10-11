@@ -3,33 +3,32 @@ Java Utils contains resources to help communicate with appsfly.io secure server 
 
 appsfly.io does not whitelist IPs, instead a checkSum should be generated with the Secret Key. To get a Secret Key contact integrations@appsfly.io
 
-##  Get Started
+###  Get Started
 To start posting messages securely we need the following:
 
-| Key | Description |
-| --- | --- |
-| Module Handle | Unique handle of the micro module. This will be provided by the service provider. |
-| Secret Key | Secret Key is required for encryption. Secret Key should be generated on the Appsfly publisher dashboard. |
-| App Key | Application key to identify the publisher instance. |
 
-You will have to generate a checkSum from the parameters, headers with the secret key provided by appsfly.io.
+| Value | Key | Description |
+| --- | --- | --- |
+| Module Handle | MODULE_HANDLE | Unique handle of the micro module. This will be provided by the service provider. |
+| Secret Key | SECRET_KEY | Secret Key is required for encryption. Secret Key should be generated on the Appsfly publisher dashboard. |
+| App Key | APP_KEY | Application key to identify the publisher instance. |
+| Executor Url | EXECUTOR_URL | Url to reach appsfly.io Microservices. |
 
-## Configuration
-Configure the app using the following parameters:
 
-* REPO_URL - currently "https://microapps.appsfly.io"
-* SECRET_KEY - generated secret key, contact integrations@appsfly.io for a secret key
-* APP_KEY - assigned Application key. Eg: "92ae2562-aebc-468f-009e-aa300d9d39b1"
+  **NOTE:** You will have to generate a checkSum from the parameters, headers with the secret key provided by appsfly.io.
 
-```
-AppInstance.AFConfig config = new AppInstance.AFConfig("REPO_URL", "SECRET_KEY", "APP_KEY");
-```    
-## Package
+# Integration options  
+### Option 1: Package
 The SDK can be included to handle the encryption and decryption along with checkSum generation and verification.
 You can use it to avoid boiler plate code. If not, you can use the api endpoint.
 
+#### Configuration
 ```
-AppInstance travelProvider = new AppInstance(config, "com.domain.ms-travel");
+AppInstance.AFConfig config = new AppInstance.AFConfig("REPO_URL", "SECRET_KEY", "APP_KEY");
+```  
+#### Execution
+```
+AppInstance travelProvider = new AppInstance(config, "MODULE_HANDLE");
 travelProvider.exec("doBooking",  new JSONObject() {{
     //Set Params Here
     // We will take care of checksum
@@ -48,7 +47,7 @@ travelProvider.exec("doBooking",  new JSONObject() {{
 });
 ```
 
-## API Endpoint ( "/executor/exec" )
+### Option 2: API Endpoint ( "/executor/exec" )
 
 appsfly.io exposes a single API endpoint to access Microservices directly. Headers are used for authentication and sessions will be managed accordingly.
 
