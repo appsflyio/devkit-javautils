@@ -1,41 +1,22 @@
 ##appsfly.io Dev Kit Java Utils
 
------------------------
+# About Java Utils
+Java Utils contains resources to help communicate with appsfly.io secure server through encryption. 
 
-INTRO ABOUT JAVA UTILS
+##  Get Started
+To start posting messages securely we need the following:
 
-## Example usage
+| Key | Description |
+| --- | --- |
+| Module Handle | Unique handle of the micro module. This will be provided by the service provider. |
+| Secret Key | Secret Key is required for encryption. Secret Key should be generated on the Appsfly publisher dashboard. |
+| App Key | Application key to identify the publisher instance. |
 
------------------------
-
-## Java Utils
-
-Before we start creating orders and process payments, we need to do some basic setup of the SDK.
-
-1. Module Handle (X-Module-Handle)
-2. Secret Key
-3. App Key (X-App-Key)
-
-Headers
-1. 'X-UUID' - Unique User Id
-2. 'X-App-Key' - App Key
-3. 'X-Module-Handle' - Module Handle
-4. 'X-Checksum' - Checkum
-
-Generation of checksum
+## Generation of checksum
 String payload = body + "|" +  microModuleId + "|" + config.appKey + "|" + userID;
 String checksum = CtyptoUtil.getInstance().getChecksum(payload.getBytes(), config.secretKey);
 
-#### Setting up the SDK for use.
-
-To setup the SDK, we must first declare the **merchantId**, **apiKey** and **environment** that we wish to use.
-
-Set up the SDK by invoking the following function: `configure($environment, $merchantId, $apiKey)` 
-**Note: The merchantd that is passed to the configure method must be created on the corresponding environment. If you create an account in
-sandbox.juspay.in and pass the environment as ** `JuspayConfiguration::ENVIRONMENT_PRODUCTION` ** API's will not work`.
-
-Once the setup is done, one can create instances of the API classes, nameley the `Orders` and `Cards` classes.
-
+## Verification of checkSum
 
         AppInstance.AFConfig config = new AppInstance.AFConfig("https://microapps.appsfly.io", "1234567890123456", "92ae2562-aebc-468f-bc9e-aa3cdd9d39b1");
         
