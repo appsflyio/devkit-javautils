@@ -83,4 +83,4 @@ POST
  ```
 
 ##### Response
-Response format will be dependent on microservice. Please go through [this documentation]() for different microservices.
+Response format will be dependent on microservice. Please go through [this documentation](https://github.com/appsflyio/devkit-javautils/blob/master/MICROSERVICE_SPEC.md) for different microservices.
