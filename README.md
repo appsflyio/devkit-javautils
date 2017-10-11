@@ -18,7 +18,7 @@ String checksum = CtyptoUtil.getInstance().getChecksum(payload.getBytes(), confi
 
 ## Verification of checkSum
 
-        AppInstance.AFConfig config = new AppInstance.AFConfig("https://microapps.appsfly.io", "1234567890123456", "92ae2562-aebc-468f-bc9e-aa3cdd9d39b1");
+AppInstance.AFConfig config = new AppInstance.AFConfig("https://microapps.appsfly.io", "1234567890123456", "92ae2562-aebc-468f-bc9e-aa3cdd9d39b1");
         
 
 ## API Endpoint (/executor/exec)
