@@ -35,7 +35,7 @@ Please contact integrations@appsfly.io for your credientials.
 ### Option 1: SDK
 The SDK can be included to handle authorization. There is no need for you to handle checksum generation and verification.
 
-##### Install
+#### Setup SDK
 
 Maven
 ###### Step 1. Add repo to your root pom.xml
@@ -48,7 +48,7 @@ Maven
 </repositories>
 ```
 
-Step 2. Add the dependency
+###### Step 2. Add the dependency
 ```
 <dependencies>
      <dependency>
@@ -70,7 +70,7 @@ allprojects {
 }
 ```
 
-Step 2. Add the dependency
+###### Step 2. Add the dependency
 ```
 dependencies {
 	compile 'com.github.User:Repo:Tag'
@@ -78,11 +78,11 @@ dependencies {
 
 ```
 
-##### Configuration
+#### Configuration
 ```
 AppInstance.AFConfig config = new AppInstance.AFConfig("EXECUTOR_URL", "SECRET_KEY", "APP_KEY");
 ```  
-##### Execution
+#### Execution
 ```
 AppInstance travelProvider = new AppInstance(config, "MODULE_HANDLE");
 travelProvider.exec("INTENT", JSONObject("PAYLOAD"), "UUID", new Callback() {
@@ -101,13 +101,13 @@ travelProvider.exec("INTENT", JSONObject("PAYLOAD"), "UUID", new Callback() {
 ### Option 2: API Endpoint
 appsfly.io exposes a single API endpoint to access Microservices directly.
 
-##### Endpoint
+#### Endpoint
 https://microapps.appsfly.io/executor/exec
 
-##### Method
+#### Method
 POST
 
-##### Headers
+#### Headers
 | Header | Description |
 | --- | --- |
 | X-UUID | [UUID](#UUID) |
@@ -116,7 +116,7 @@ POST
 | X-Checksum | CHECKSUM. Please go through [this gist](https://gist.github.com/prateektc/95e649649ee819b300914de76330369b) to generate checksum. |
 | Content-Type | Must be "application/json" |
 
-##### Body
+#### Body
 [INTENT](#INTENT), [PAYLOAD](#PAYLOAD)
 ``` 
 {
@@ -125,5 +125,7 @@ POST
  } 
  ```
 
-##### Response
+----------------------------------------
+
+### Micro Service Response
 Response format will be dependent on microservice. Please go through [this documentation](https://github.com/appsflyio/devkit-javautils/blob/master/MICROSERVICE_SPEC.md) for different microservices.
