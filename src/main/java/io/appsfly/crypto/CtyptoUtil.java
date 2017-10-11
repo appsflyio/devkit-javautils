@@ -7,6 +7,7 @@ import org.apache.commons.lang.ArrayUtils;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -25,11 +26,10 @@ public class CtyptoUtil {
         try {
             IvParameterSpec iv = new IvParameterSpec("$$appsfly.io##$$".getBytes("UTF-8"));
             SecretKeySpec skeySpec = new SecretKeySpec(key.getBytes("UTF-8"), "AES");
-
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
             cipher.init(Cipher.ENCRYPT_MODE, skeySpec, iv);
-            byte[] encrypted = Base64.encodeBase64(cipher.doFinal(data));
-            return encrypted;
+            byte[] encrypted = cipher.doFinal(data);
+            return Base64.encodeBase64(encrypted);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -45,25 +45,26 @@ public class CtyptoUtil {
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
             cipher.init(Cipher.DECRYPT_MODE, skeySpec, iv);
 
-            return cipher.doFinal(Base64.decodeBase64(data));
+            byte[] original = cipher.doFinal(Base64.decodeBase64(data));
+
+            return original;
 
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-
         return null;
     }
 
     private byte[] getSalt(int length) {
         byte[] salt = new byte[length];
         new SecureRandom().nextBytes(salt);
-        return salt;
+        return Base64.encodeBase64(salt);
     }
 
-    private byte[] getBytes(byte[] salt, byte[] data, String algo) {
+    private byte[] getBytes(byte[] data, String algorithm) {
         try {
-            MessageDigest digest = MessageDigest.getInstance(algo);
-            digest.update(ArrayUtils.addAll(salt, data));
+            MessageDigest digest = MessageDigest.getInstance(algorithm);
+            digest.update(data);
             return digest.digest();
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
@@ -72,12 +73,14 @@ public class CtyptoUtil {
     }
 
     private byte[] sha256sum(byte [] salt, byte [] data){
-        return Hex.encodeHexString(getBytes(salt, data, "SHA-256")).getBytes();
+        return Hex.encodeHexString(getBytes(ArrayUtils.addAll(salt, data), "SHA-256")).getBytes();
     }
 
     public String getChecksum(byte [] data, String key){
         byte[] salt = getSalt(4);
-        byte[] encrypt = encrypt(ArrayUtils.addAll(sha256sum(salt, data), salt), key);
+        byte[] sha256sum = sha256sum(salt, data);
+        byte[] checksum = ArrayUtils.addAll(sha256sum, salt);
+        byte[] encrypt = encrypt(checksum, key);
         return new String(encrypt);
     }
 
