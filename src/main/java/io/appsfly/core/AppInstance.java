@@ -84,6 +84,10 @@ public class AppInstance {
         });
     }
 
+    public JSONObject execSync(final String intent, final JSONObject intentData) throws AppsflyException{
+        return execSync(intent, intentData, "generic");
+    }
+
     public JSONObject execSync(final String intent, final JSONObject intentData, final String userID) throws AppsflyException{
         final JSONObject body = new JSONObject() {{
             put("intent", intent);
