@@ -82,4 +82,46 @@ public class AppInstance {
             }
         });
     }
+
+    public JSONObject execSync(final String intent, final JSONObject intentData, final String userID) throws AppsflyException{
+        final JSONObject body = new JSONObject() {{
+            put("intent", intent);
+            put("data", intentData);
+        }};
+        String payload = body + "|" +  microModuleId + "|" + config.appKey + "|" + userID;
+        String checksum = CtyptoUtil.getInstance().getChecksum(payload.getBytes(), config.secretKey);
+        OkHttpClient httpClient = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url(this.config.repoUrl+"/executor/exec")
+                .addHeader("X-Module-Handle", microModuleId)
+                .addHeader("X-App-Key", config.appKey)
+                .addHeader("X-Checksum", checksum)
+                .addHeader("X-UUID", userID)
+                .post(RequestBody.create(JSON, body.toString()))
+                .build();
+        try {
+            final Response response = httpClient.newCall(request).execute();
+            String responseChecksum = response.headers().get("X-Checksum");
+            if(responseChecksum!=null){
+                boolean verified = CtyptoUtil.getInstance().verifychecksum(response.body().bytes(), responseChecksum, config.secretKey);
+                if (verified){
+                    return new JSONObject(response.body().bytes());
+                }
+                else{
+                    throw new AppsflyException("Checksum Validation Failed");
+                }
+            }
+            else{
+                final JSONObject responseBody = new JSONObject(response.body().string());
+                if(responseBody.has("error")){
+                    throw new AppsflyException(responseBody.getJSONObject("error").getString("message"));
+                } else {
+                    return responseBody;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }
