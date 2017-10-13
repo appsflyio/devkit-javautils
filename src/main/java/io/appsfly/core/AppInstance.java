@@ -60,9 +60,10 @@ public class AppInstance {
             public void onResponse(Call call, final okhttp3.Response response) throws IOException {
                 String checksum = response.headers().get("X-Checksum");
                 if(checksum!=null){
-                    boolean verified = CtyptoUtil.getInstance().verifychecksum(response.body().bytes(), checksum, config.secretKey);
+                    byte[] bytes = response.body().bytes();
+                    boolean verified = CtyptoUtil.getInstance().verifychecksum(bytes, checksum, config.secretKey);
                     if (verified){
-                        callback.onResponse(new JSONObject(response.body().bytes()));
+                        callback.onResponse(new JSONObject(bytes));
                     }
                     else{
                         callback.onError(new JSONObject(){{
