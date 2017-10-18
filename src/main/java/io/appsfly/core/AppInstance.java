@@ -109,12 +109,11 @@ public class AppInstance {
             String responseChecksum = response.headers().get("X-Checksum");
             if(responseChecksum!=null){
                 byte[] bytes = response.body().bytes();
-                System.out.println(bytes.length);
-                ResponseBody data = response.body();
-                System.out.println(data.toString());
+                String data = response.body().string();
+                System.out.println(data);
                 boolean verified = CtyptoUtil.getInstance().verifychecksum(bytes, responseChecksum, config.secretKey);
                 if (verified){
-                    return new JSONObject(data.string());
+                    return new JSONObject(data);
                 }
                 else{
                     throw new AppsflyException("Checksum Validation Failed");
