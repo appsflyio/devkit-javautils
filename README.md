@@ -27,7 +27,7 @@ Please contact integrations@appsfly.io for your credientials.
 #### Intent Params
 | Key | Description |
 | --- | --- |
-| INTENT | Intent is like an endpoint you are accessing to send message |
+| INTENT | Intent is like an endpoint you are accessing to send messages |
 | PAYLOAD | Data payload |
 
 # Integration options  
