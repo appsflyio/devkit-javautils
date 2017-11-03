@@ -113,7 +113,7 @@ POST
 | X-UUID | [UUID](#UUID) |
 | X-App-Key | [APP_KEY](#APP_KEY)|
 | X-Module-Handle | [MODULE_HANDLE](#MODULE_HANDLE)|
-| X-Checksum | CHECKSUM. Please go through [this gist](https://gist.github.com/prateektc/95e649649ee819b300914de76330369b) to generate checksum. |
+| X-Checksum | CHECKSUM. Please go through [this gist](https://github.com/appsflyio/devkit-javautils/blob/master/src/main/java/io/appsfly/crypto/CtyptoUtil.java) to generate checksum. |
 | Content-Type | Must be "application/json" |
 
 #### Body
