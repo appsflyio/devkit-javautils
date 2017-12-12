@@ -54,7 +54,7 @@ Maven
      <dependency>
          <groupId>com.github.appsflyio</groupId>
          <artifactId>devkit-javautils</artifactId>
-         <version>0.0.7</version>
+         <version>0.0.9-beta</version>
      </dependency>
 </dependencies>
 ```
@@ -73,7 +73,7 @@ allprojects {
 ###### Step 2. Add the dependency
 ```
 dependencies {
-	compile 'com.github.appsflyio:devkit-javautils:0.0.7'
+	compile 'com.github.appsflyio:devkit-javautils:0.0.9-beta'
 }
 
 ```
