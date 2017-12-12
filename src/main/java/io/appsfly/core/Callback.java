@@ -3,6 +3,7 @@ package io.appsfly.core;
 import io.appsfly.util.json.JSONObject;
 
 public interface Callback {
-    void onResponse(JSONObject response);
+    void onResponse(Object response);
+
     void onError(JSONObject error);
 }

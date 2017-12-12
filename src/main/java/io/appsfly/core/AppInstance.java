@@ -2,6 +2,7 @@ package io.appsfly.core;
 
 import io.appsfly.crypto.CtyptoUtil;
 import io.appsfly.util.json.JSONArray;
+import io.appsfly.util.json.JSONException;
 import io.appsfly.util.json.JSONObject;
 import io.appsfly.util.json.JSONTokener;
 import okhttp3.*;
@@ -67,7 +68,11 @@ public class AppInstance {
                     byte[] bytes = response.body().bytes();
                     boolean verified = CtyptoUtil.getInstance().verifychecksum(bytes, checksum, config.secretKey);
                     if (verified) {
-                        callback.onResponse(new JSONObject(bytes));
+                        try {
+                            callback.onResponse(new JSONTokener(new String(bytes)).nextValue());
+                        } catch (JSONException e) {
+                            callback.onResponse(new JSONObject());
+                        }
                     } else {
                         callback.onError(new JSONObject() {{
                             put("message", "Checksum Validation Failed");
