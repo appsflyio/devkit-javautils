@@ -1,4 +1,4 @@
-# About appsfly.io Dev Kit Java Utils
+# About Java Integration Kit
 This library contains resources to help communicate with appsfly.io execution server.
 For all communications with execution server, your application should be registered and a secret key needs to be generated. 
 
