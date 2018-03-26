@@ -9,9 +9,9 @@ public class App {
     public static void main(String args[]) {
         org.apache.log4j.BasicConfigurator.configure();
 
-        AppInstance.AFConfig config = new AppInstance.AFConfig("https://microapps.appsfly.io", "1234567890123456", "92ae2562-aebc-468f-bc9e-aa3cdd9d39b1");
-        AppInstance clearTrip = new AppInstance(config, "com.cleartrip.msactivities");
-        clearTrip.exec("doBooking", new JSONObject() {{
+        AppInstance.AFConfig config = new AppInstance.AFConfig("https://microapps.appsfly.io", "3384354330428323", "abb3f71c-a8cc-4f2a-90aa-23ac3771f5f7");
+        AppInstance clearTrip = new AppInstance(config, "io.appsfly.msctpactivities");
+        clearTrip.exec("fetch_cities", new JSONObject() {{
             //Set Params Here
             // We will take care of checksum
         }}, new Callback() {
@@ -29,7 +29,7 @@ public class App {
         });
 
 
-//        AppInstance bookMyShow = new AppInstance(config, "com.cleartrip.microservices.default");
+//        AppInstanceJwt bookMyShow = new AppInstanceJwt(config, "com.cleartrip.microservices.default");
 //        bookMyShow.exec("doBooking",new JSONObject() {{
 //            //Set Params Here
 //            // We will take care of checksum

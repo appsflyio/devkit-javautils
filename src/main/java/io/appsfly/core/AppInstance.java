@@ -1,7 +1,7 @@
 package io.appsfly.core;
 
 import io.appsfly.crypto.CtyptoUtil;
-import io.appsfly.util.json.JSONArray;
+import io.appsfly.jwt.JwtUtil;
 import io.appsfly.util.json.JSONException;
 import io.appsfly.util.json.JSONObject;
 import io.appsfly.util.json.JSONTokener;
@@ -41,19 +41,23 @@ public class AppInstance {
 
     public void exec(final String intent, final JSONObject intentData, final String userID, final Callback callback) {
         final JSONObject body = new JSONObject() {{
-            put("intent", intent);
             put("data", intentData);
+            put("intent", intent);
         }};
-        String payload = body + "|" + microModuleId + "|" + config.appKey + "|" + userID;
-        String checksum = CtyptoUtil.getInstance().getChecksum(payload.getBytes(), config.secretKey);
+        JwtUtil jwtUtil = new JwtUtil();
+
+        String checksum = jwtUtil.generateChecksum(body.toString(), config.secretKey);
+        System.out.println("token is " + checksum);
         OkHttpClient httpClient = new OkHttpClient();
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("af_data", checksum);
         Request request = new Request.Builder()
                 .url(this.config.repoUrl + "/executor/exec")
                 .addHeader("X-Module-Handle", microModuleId)
                 .addHeader("X-App-Key", config.appKey)
-                .addHeader("X-Checksum", checksum)
                 .addHeader("X-UUID", userID)
-                .post(RequestBody.create(JSON, body.toString()))
+                .addHeader("X-UUID", userID)
+                .post(RequestBody.create(JSON, jsonObject.toString()))
                 .build();
         httpClient.newCall(request).enqueue(new okhttp3.Callback() {
             @Override
@@ -65,11 +69,12 @@ public class AppInstance {
             public void onResponse(Call call, final okhttp3.Response response) throws IOException {
                 String checksum = response.headers().get("X-Checksum");
                 if (checksum != null) {
-                    byte[] bytes = response.body().bytes();
-                    boolean verified = CtyptoUtil.getInstance().verifychecksum(bytes, checksum, config.secretKey);
+                    Object bytes = (Object) response.body();
+                    JwtUtil jwtUtil = new JwtUtil();
+                    boolean verified = jwtUtil.verifyCheckSum(checksum, config.secretKey, bytes.toString());
                     if (verified) {
                         try {
-                            callback.onResponse(new JSONTokener(new String(bytes)).nextValue());
+                            callback.onResponse(new JSONTokener(new String(bytes.toString())).nextValue());
                         } catch (JSONException e) {
                             callback.onResponse(new JSONObject());
                         }

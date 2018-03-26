@@ -33,12 +33,14 @@ public class JwtUtil {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             token = JWT.create()
-                    .withClaim("claim", data)
+                    .withClaim("af_claim", data)
                     .sign(algorithm);
         } catch (UnsupportedEncodingException exception) {
             //UTF-8 encoding not supported
+            exception.printStackTrace();
         } catch (JWTCreationException exception) {
             //Invalid Signing configuration / Couldn't convert Claims.
+            exception.printStackTrace();
         }
         return token;
 
@@ -48,7 +50,7 @@ public class JwtUtil {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             JWTVerifier verifier = JWT.require(algorithm)
-                    .withClaim("claim", data)
+                    .withClaim("af_data", data)
                     .build(); //Reusable verifier instance
             DecodedJWT jwt = verifier.verify(token);
             System.out.print("verification process data is " + jwt.getPayload());
