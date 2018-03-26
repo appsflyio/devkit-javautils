@@ -24,7 +24,7 @@ public class JwtUtil {
         String data1 = new JSONObject() {{
             this.put("find", "srikanth");
         }}.toString();
-        boolean b = jwtUtil.verifyCheckSum(mohit, "123", data1);
+        String b = jwtUtil.verifyCheckSum(mohit, "123");
         System.out.println("data validation is " + b);
     }
 
@@ -46,28 +46,23 @@ public class JwtUtil {
 
     }
 
-    public boolean verifyCheckSum(String token, String secret, String data) {
+    public String verifyCheckSum(String token, String secret) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             JWTVerifier verifier = JWT.require(algorithm)
-                    .withClaim("af_data", data)
                     .build(); //Reusable verifier instance
-            DecodedJWT jwt = verifier.verify(token);
-            System.out.print("verification process data is " + jwt.getPayload());
             DecodedJWT jwt1 = JWT.decode(token);
-            System.out.println("decoded token  process data is " + jwt1.getPayload());
-            Claim claim = jwt1.getClaim("claim");
-            String s = claim.asString();
-            System.out.println("data from jwt is " + s);
-            return true;
+            Claim claim = jwt1.getClaim("af_claim");
+            return new JSONObject(claim.asMap()).toString();
+//            return ((JsonNodeClaim) claim).data.toString();
         } catch (UnsupportedEncodingException exception) {
             exception.printStackTrace();
             //UTF-8 encoding not supported
-            return false;
+            return null;
         } catch (JWTVerificationException exception) {
             //Invalid signature/claims
             exception.printStackTrace();
-            return false;
+            return null;
         }
     }
 

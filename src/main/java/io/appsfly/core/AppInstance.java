@@ -27,8 +27,8 @@ public class AppInstance {
 
     private AFConfig config;
     private String microModuleId;
-    public static final MediaType JSON
-            = MediaType.parse("application/json; charset=utf-8");
+    public static final MediaType JSON  = MediaType.parse("application/json; charset=utf-8");
+    public static final MediaType RAW = MediaType.parse("text/plain; charset=utf-8");
 
     public AppInstance(AFConfig config, String microModuleId) {
         this.config = config;
@@ -47,34 +47,30 @@ public class AppInstance {
         JwtUtil jwtUtil = new JwtUtil();
 
         String checksum = jwtUtil.generateChecksum(body.toString(), config.secretKey);
-        System.out.println("token is " + checksum);
         OkHttpClient httpClient = new OkHttpClient();
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("af_data", checksum);
-        Request request = new Request.Builder()
+        Request request;
+         request = new Request.Builder()
                 .url(this.config.repoUrl + "/executor/exec")
                 .addHeader("X-Module-Handle", microModuleId)
                 .addHeader("X-App-Key", config.appKey)
                 .addHeader("X-UUID", userID)
-                .addHeader("X-UUID", userID)
-                .post(RequestBody.create(JSON, jsonObject.toString()))
+                .addHeader("X-Encrypted", "true")
+                .post(RequestBody.create(RAW, checksum))
                 .build();
         httpClient.newCall(request).enqueue(new okhttp3.Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-
+                System.out.println(e.getStackTrace());
             }
 
             @Override
             public void onResponse(Call call, final okhttp3.Response response) throws IOException {
-                String checksum = response.headers().get("X-Checksum");
-                if (checksum != null) {
-                    Object bytes = (Object) response.body();
-                    JwtUtil jwtUtil = new JwtUtil();
-                    boolean verified = jwtUtil.verifyCheckSum(checksum, config.secretKey, bytes.toString());
-                    if (verified) {
+                JwtUtil jwtUtil = new JwtUtil();
+                String token = response.body().string();
+                String verified = jwtUtil.verifyCheckSum(token, config.secretKey);
+                    if (verified != null) {
                         try {
-                            callback.onResponse(new JSONTokener(new String(bytes.toString())).nextValue());
+                            callback.onResponse(new JSONTokener(verified).nextValue());
                         } catch (JSONException e) {
                             callback.onResponse(new JSONObject());
                         }
@@ -83,15 +79,6 @@ public class AppInstance {
                             put("message", "Checksum Validation Failed");
                         }});
                     }
-                } else {
-                    final JSONObject responseBody = new JSONObject(response.body().string());
-                    if (responseBody.has("error")) {
-                        callback.onError(new JSONObject() {{
-                            put("message", responseBody.getJSONObject("error").get("message"));
-                            put("status", response.code());
-                        }});
-                    }
-                }
             }
         });
     }
