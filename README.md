@@ -100,7 +100,12 @@ travelProvider.exec("INTENT", JSONObject("PAYLOAD"), "UUID", new Callback() {
 #### Execution Synchronous
 ```
 AppInstance travelProvider = new AppInstance(config, "MODULE_HANDLE");
-Object object = travelProvider.execSync("INTENT", JSONObject("PAYLOAD"), "UUID");
+try {
+            Object object = travelProvider.execSync("INTENT", JSONObject("PAYLOAD"), "UUID");
+        } catch (AppsflyException e) {
+            e.printStackTrace();
+        }
+
 ```
 ### Option 2: API Endpoint
 appsfly.io exposes a single API endpoint to access Microservices directly.
