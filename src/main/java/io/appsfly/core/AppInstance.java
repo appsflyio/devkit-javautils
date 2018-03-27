@@ -8,6 +8,7 @@ import io.appsfly.util.json.JSONTokener;
 import okhttp3.*;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 public class AppInstance {
 
@@ -27,7 +28,7 @@ public class AppInstance {
 
     private AFConfig config;
     private String microModuleId;
-    public static final MediaType JSON  = MediaType.parse("application/json; charset=utf-8");
+    public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     public static final MediaType RAW = MediaType.parse("text/plain; charset=utf-8");
 
     public AppInstance(AFConfig config, String microModuleId) {
@@ -45,40 +46,47 @@ public class AppInstance {
             put("intent", intent);
         }};
         JwtUtil jwtUtil = new JwtUtil();
-
-        String checksum = jwtUtil.generateChecksum(body.toString(), config.secretKey);
-        OkHttpClient httpClient = new OkHttpClient();
-        Request request;
-         request = new Request.Builder()
+        OkHttpClient httpClient = new OkHttpClient.Builder()
+                .connectTimeout(10, TimeUnit.MINUTES)
+                .readTimeout(10, TimeUnit.MINUTES)
+                .writeTimeout(10, TimeUnit.MINUTES)
+                .build();
+        Request.Builder url = new Request.Builder()
                 .url(this.config.repoUrl + "/executor/exec")
                 .addHeader("X-Module-Handle", microModuleId)
                 .addHeader("X-App-Key", config.appKey)
-                .addHeader("X-UUID", userID)
-                .addHeader("X-Encrypted", "true")
-                .post(RequestBody.create(RAW, checksum))
-                .build();
+                .addHeader("X-UUID", userID);
+        Request request = getRequest(body, jwtUtil, url);
         httpClient.newCall(request).enqueue(new okhttp3.Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onFailure(Call call, final IOException e) {
                 System.out.println(e.getStackTrace());
+                callback.onResponse(new JSONObject() {{
+                    this.put("error", e.getMessage());
+                }});
             }
 
             @Override
-            public void onResponse(Call call, final okhttp3.Response response) throws IOException {
-                JwtUtil jwtUtil = new JwtUtil();
-                String token = response.body().string();
-                String verified = jwtUtil.verifyCheckSum(token, config.secretKey);
-                    if (verified != null) {
-                        try {
-                            callback.onResponse(new JSONTokener(verified).nextValue());
-                        } catch (JSONException e) {
-                            callback.onResponse(new JSONObject());
-                        }
-                    } else {
-                        callback.onError(new JSONObject() {{
-                            put("message", "Checksum Validation Failed");
-                        }});
+            public void onResponse(Call call, final Response response) throws IOException {
+                String verified = null;
+                if (config.secretKey != null) {
+                    JwtUtil jwtUtil = new JwtUtil();
+                    String token = response.body().string();
+                    verified = jwtUtil.verifyCheckSum(token, config.secretKey);
+                } else {
+                    verified = response.body().string();
+                }
+                if (verified != null) {
+                    try {
+                        callback.onResponse(new JSONTokener(verified).nextValue());
+                    } catch (JSONException e) {
+                        callback.onResponse(new JSONObject());
                     }
+                } else {
+                    callback.onError(new JSONObject() {{
+                        put("message", "Checksum Validation Failed");
+                    }});
+                }
             }
         });
     }
@@ -89,42 +97,65 @@ public class AppInstance {
 
     public Object execSync(final String intent, final JSONObject intentData, final String userID) throws AppsflyException {
         final JSONObject body = new JSONObject() {{
-            put("intent", intent);
             put("data", intentData);
+            put("intent", intent);
         }};
-        String payload = body + "|" + microModuleId + "|" + config.appKey + "|" + userID;
-        String checksum = CtyptoUtil.getInstance().getChecksum(payload.getBytes(), config.secretKey);
-        OkHttpClient httpClient = new OkHttpClient();
-        Request request = new Request.Builder()
+        JwtUtil jwtUtil = new JwtUtil();
+        OkHttpClient httpClient = new OkHttpClient.Builder()
+                .connectTimeout(10, TimeUnit.MINUTES)
+                .readTimeout(10, TimeUnit.MINUTES)
+                .writeTimeout(10, TimeUnit.MINUTES)
+                .build();
+        Request request;
+        Request.Builder url = new Request.Builder()
                 .url(this.config.repoUrl + "/executor/exec")
                 .addHeader("X-Module-Handle", microModuleId)
                 .addHeader("X-App-Key", config.appKey)
-                .addHeader("X-Checksum", checksum)
-                .addHeader("X-UUID", userID)
-                .post(RequestBody.create(JSON, body.toString()))
-                .build();
+                .addHeader("X-UUID", userID);
+        request = getRequest(body, jwtUtil, url);
         try {
             final Response response = httpClient.newCall(request).execute();
-            String responseChecksum = response.headers().get("X-Checksum");
-            if (responseChecksum != null) {
-                byte[] bytes = response.body().bytes();
-                boolean verified = CtyptoUtil.getInstance().verifychecksum(bytes, responseChecksum, config.secretKey);
-                if (verified) {
-                    return new JSONTokener(new String(bytes)).nextValue();
-                } else {
-                    throw new AppsflyException("Checksum Validation Failed");
-                }
+            String verified = null;
+            if (config.secretKey != null) {
+                String token = response.body().string();
+                verified = jwtUtil.verifyCheckSum(token, config.secretKey);
             } else {
-                final JSONObject responseBody = new JSONObject(response.body().string());
-                if (responseBody.has("error")) {
-                    throw new AppsflyException(responseBody.getJSONObject("error").getString("message"));
+                verified = response.body().string();
+            }
+
+            if (null != verified) {
+                return new JSONTokener(verified).nextValue();
+            } else {
+                if (config.secretKey == null) {
+                    final JSONObject responseBody = new JSONObject(response.body().string());
+                    if (responseBody.has("error")) {
+                        throw new AppsflyException(responseBody.getJSONObject("error").getString("message"));
+                    } else {
+                        return responseBody;
+                    }
                 } else {
-                    return responseBody;
+                    return new JSONObject();
                 }
             }
+
         } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
+    }
+
+    private Request getRequest(JSONObject body, JwtUtil jwtUtil, Request.Builder url) {
+        Request request;
+        if (config.secretKey != null) {
+            String checksum = jwtUtil.generateChecksum(body.toString(), config.secretKey);
+            url.addHeader("X-Encrypted", "true");
+            url.addHeader("Content-Type", "application/json");
+            request = url
+                    .post(RequestBody.create(RAW, checksum))
+                    .build();
+        } else {
+            request = url.post(RequestBody.create(JSON, body.toString())).build();
+        }
+        return request;
     }
 }
