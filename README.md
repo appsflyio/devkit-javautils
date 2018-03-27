@@ -82,7 +82,7 @@ dependencies {
 ```
 AppInstance.AFConfig config = new AppInstance.AFConfig("EXECUTOR_URL", "SECRET_KEY", "APP_KEY");
 ```  
-#### Execution
+#### Execution Asynchronous
 ```
 AppInstance travelProvider = new AppInstance(config, "MODULE_HANDLE");
 travelProvider.exec("INTENT", JSONObject("PAYLOAD"), "UUID", new Callback() {
@@ -97,7 +97,11 @@ travelProvider.exec("INTENT", JSONObject("PAYLOAD"), "UUID", new Callback() {
     }
 });
 ```
-
+#### Execution Synchronous
+```
+AppInstance travelProvider = new AppInstance(config, "MODULE_HANDLE");
+Object object = travelProvider.execSync("INTENT", JSONObject("PAYLOAD"), "UUID");
+```
 ### Option 2: API Endpoint
 appsfly.io exposes a single API endpoint to access Microservices directly.
 
