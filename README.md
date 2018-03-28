@@ -54,7 +54,7 @@ Maven
      <dependency>
          <groupId>com.github.appsflyio</groupId>
          <artifactId>devkit-javautils</artifactId>
-         <version>0.0.9-beta</version>
+         <version>0.0.11</version>
      </dependency>
 </dependencies>
 ```
