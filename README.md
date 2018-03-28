@@ -41,22 +41,20 @@ Maven
 ###### Step 1. Add repo to your root pom.xml
 ```
 <repositories>
-     <repository>
-         <id>jitpack.io</id>
-         <url>https://jitpack.io</url>
-     </repository>
+	<repository>
+		<id>jitpack.io</id>
+		 <url>https://jitpack.io</url>
+	</repository>
 </repositories>
 ```
 
 ###### Step 2. Add the dependency
 ```
-<dependencies>
-     <dependency>
-         <groupId>com.github.appsflyio</groupId>
-         <artifactId>devkit-javautils</artifactId>
-         <version>0.0.11</version>
-     </dependency>
-</dependencies>
+<dependency>
+	 <groupId>com.github.appsflyio</groupId>
+	 <artifactId>java-integration-kit</artifactId>
+	 <version>0.0.11</version>
+</dependency>
 ```
 
 Gradle
