@@ -120,16 +120,24 @@ POST
 | X-UUID | [UUID](#UUID) |
 | X-App-Key | [APP_KEY](#APP_KEY)|
 | X-Module-Handle | [MODULE_HANDLE](#MODULE_HANDLE)|
-| X-Checksum | CHECKSUM. Please go through [this gist](https://github.com/appsflyio/devkit-javautils/blob/master/src/main/java/io/appsfly/crypto/CtyptoUtil.java) to generate checksum. |
-| Content-Type | Must be "application/json" |
+| X-Encrypted | BOOLEAN |
+| Content-Type | Must be "text/plain" |
 
 #### Body
+```
+eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhZl9jbGFpbSI6IntcImludGVudFwiOlwiSU5URU5UXCIsXCJkYXRhXCI6XCJQQVlMT0FEXCJ9In0.ZPUfElCCO2FiSQwtur6t80kHFTOzsvnJGQ-j_70WZ0k
+```
+Body must have the encrypted checksum for the following JSON. Please use [java-jwt](https://github.com/auth0/java-jwt) to generate and verify checksum.
 [INTENT](#INTENT), [PAYLOAD](#PAYLOAD)
 ``` 
 {
   "intent":"INTENT",
   "data":"PAYLOAD"
- } 
+} 
+ ```
+Covert the above JSON to string and append it to key "af_claim" as follows:
+``` 
+{"af_claim": "{\"intent\":\"INTENT\", \"data\":\"PAYLOAD\"}"}
  ```
 
 ----------------------------------------
