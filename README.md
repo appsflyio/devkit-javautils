@@ -99,10 +99,10 @@ travelProvider.exec("INTENT", JSONObject("PAYLOAD"), "UUID", new Callback() {
 ```
 AppInstance travelProvider = new AppInstance(config, "MODULE_HANDLE");
 try {
-            Object object = travelProvider.execSync("INTENT", JSONObject("PAYLOAD"), "UUID");
-        } catch (AppsflyException e) {
-            e.printStackTrace();
-        }
+      Object object = travelProvider.execSync("INTENT", JSONObject("PAYLOAD"), "UUID");
+    }catch(AppsflyException e) {
+        e.printStackTrace();
+     }
 
 ```
 ### Option 2: API Endpoint
