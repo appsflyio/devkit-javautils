@@ -13,7 +13,7 @@ public class App {
         /**
          *Plain Request
          */
-        AppInstance.AFConfig InSecureConfig = new AppInstance.AFConfig( "abb3f71c-a8cc-4f2a-90aa-23ac3771f5f7",null);
+        AppInstance.AFConfig InSecureConfig = new AppInstance.AFConfig("XXXXXXXXXX");
         AppInstance clearTripInsecure = new AppInstance(InSecureConfig, "io.appsfly.msctpactivities");
         clearTripInsecure.exec("fetch_cities", new JSONObject() {{
         }}, new Callback() {
@@ -33,8 +33,8 @@ public class App {
 /**
  *JWT Request
  */
-        AppInstance.AFConfig secureConfig = new AppInstance.AFConfig("abb3f71c-a8cc-4f2a-90aa-23ac3771f5f7","3384354330428323");
-        AppInstance clearTripSecure = new AppInstance(secureConfig, "io.appsfly.msctpactivities");
+        AppInstance.AFConfig secureConfig = new AppInstance.AFConfig("XXXXXXX", "XXXXXXXXXX");
+        AppInstance clearTripSecure = new AppInstance(secureConfig, "XXXXXXXX");
         clearTripSecure.exec("fetch_cities", new JSONObject() {{
         }}, new Callback() {
             @Override
@@ -49,6 +49,6 @@ public class App {
                 System.out.println(error);
             }
         });
-        
+
     }
 }
