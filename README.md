@@ -53,7 +53,7 @@ Maven
 <dependency>
 	 <groupId>com.github.appsflyio</groupId>
 	 <artifactId>java-integration-kit</artifactId>
-	 <version>0.0.11</version>
+	 <version>0.0.12</version>
 </dependency>
 ```
 
@@ -71,14 +71,14 @@ allprojects {
 ###### Step 2. Add the dependency
 ```
 dependencies {
-	compile 'com.github.appsflyio:devkit-javautils:0.0.11'
+	compile 'com.github.appsflyio:devkit-javautils:0.0.12'
 }
 
 ```
 
 #### Configuration
 ```
-AppInstance.AFConfig config = new AppInstance.AFConfig("EXECUTOR_URL", "SECRET_KEY", "APP_KEY");
+AppInstance.AFConfig config = new AppInstance.AFConfig("APP_KEY","SECRET_KEY");
 ```  
 #### Execution Asynchronous
 ```
