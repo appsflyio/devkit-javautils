@@ -71,7 +71,7 @@ allprojects {
 ###### Step 2. Add the dependency
 ```
 dependencies {
-	compile 'com.github.appsflyio:devkit-javautils:0.0.12'
+	compile 'com.github.appsflyio:java-integration-kit:0.0.12'
 }
 
 ```
