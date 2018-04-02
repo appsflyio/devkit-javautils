@@ -18,7 +18,13 @@ public class AppInstance {
         String secretKey;
         String appKey;
 
-        public AFConfig(String repoUrl, String secretKey, String appKey) {
+        public AFConfig(String appKey, String secretKey) {
+            this.repoUrl = "https://hub.appsfly.io";
+            this.secretKey = secretKey;
+            this.appKey = appKey;
+        }
+
+        public AFConfig(String repoUrl, String appKey, String secretKey) {
             this.repoUrl = repoUrl;
             this.secretKey = secretKey;
             this.appKey = appKey;
